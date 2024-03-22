@@ -1,12 +1,11 @@
-import { paginationHelper } from './../../../helpers/paginationHelper';
-import { Prisma, PrismaClient } from "@prisma/client";
+import { paginationHelper } from "./../../../helpers/paginationHelper";
+import { Admin, Prisma, PrismaClient } from "@prisma/client";
 import { adminSearchAbleField } from "./admin.constant";
-import prisma from '../../../shared/prisma';
-
-
+import prisma from "../../../shared/prisma";
 
 const getAllAdminFromDB = async (params: any, options: any) => {
-  const { skip, limit, sortBy, sortOrder,page } = paginationHelper.calculatePagination(options);
+  const { skip, limit, sortBy, sortOrder, page } =
+    paginationHelper.calculatePagination(options);
   const { searchTerm, ...FieldInput } = params;
   const andCondition: Prisma.AdminWhereInput[] = [];
   if (params.searchTerm) {
@@ -34,38 +33,49 @@ const getAllAdminFromDB = async (params: any, options: any) => {
   const result = await prisma.admin.findMany({
     where: whereCondition,
     skip,
-      take:limit,
-      orderBy:sortBy&& sortOrder ?  {
-        [sortBy]:sortOrder
-      } : {
-        createdAt:'desc'
-    }
+    take: limit,
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : {
+            createdAt: "desc",
+          },
   });
   const total = await prisma.admin.count({
-    where:whereCondition
-  })
+    where: whereCondition,
+  });
   return {
     meta: {
       page,
       limit,
-      total
+      total,
     },
-    data:result
-
+    data: result,
   };
 };
 
-
-const getByIdFromDB = async (id:string) => {
+const getByIdFromDB = async (id: string) => {
   const result = await prisma.admin.findUnique({
     where: {
-      id: id
-    }
-  })
-  return result
-}
+      id: id,
+    },
+  });
+  return result;
+};
+const updateAdminIntoDB = async (id: string,data:Partial<Admin>) => {
+  const result = await prisma.admin.update({
+    where: {
+      id
+    },
+    data
+  });
+  return result;
+};
 
 export const AdminService = {
   getAllAdminFromDB,
-  getByIdFromDB
+  getByIdFromDB,
+  updateAdminIntoDB,
 };
