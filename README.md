@@ -2,7 +2,7 @@ For setup prisma project with postgresql follow this,
 
 ```
 npm init -y
-npm install prisma typescript ts-node @types/node ts-node-dev cors express @types/express bcrypt @types/bcrypt
+npm install prisma typescript ts-node @types/node ts-node-dev cors express @types/express bcrypt @types/bcrypt http-status
 npx tsc --init
 npx prisma init
 

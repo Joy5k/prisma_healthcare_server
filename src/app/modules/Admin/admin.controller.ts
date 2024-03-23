@@ -1,67 +1,99 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AdminService } from "./admin.service";
 import pick from "../../../shared/pick";
 import { adminFilterableField } from "./admin.constant";
+import sendResponse from "../../../shared/sendResponse";
+import httpStatus from "http-status";
 
-const getAllAdminFromDB = async (req: Request, res: Response) => {
+
+
+const getAllAdminFromDB = async (req: Request, res: Response,next:NextFunction) => {
   try {
-      const filters = pick(req.query, adminFilterableField);
-      const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder'])
-      console.log(options);
-    const result = await AdminService.getAllAdminFromDB(filters,options);
-    res.status(200).json({
+    const filters = pick(req.query, adminFilterableField);
+    const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
+    console.log(options);
+    const result = await AdminService.getAllAdminFromDB(filters, options);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
       success: true,
       message: "Admin Retrieved Successfully",
       meta: result.meta,
-      data: result.data,
-    });
+      data: result.data
+    })
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Something went wrong",
-      error: error?.message || "Something went wrong",
-    });
+   next(error);
   }
 };
 
-const getAdminByID = async (req:Request, res:Response) => { 
- try {
-  const id = req.params.id;
-  const result = await AdminService.getByIdFromDB(id)
-  res.status(200).json({
-    success: true,
-    message: "Successfully retrieved",
-    data:result
-  })
- } catch (error) {
-   res.status(500).json({
-     success: false,
-     message: error.message || "Something went wrong",
-     error
-  })
- }
-}
-const updateIntoDB = async (req:Request, res:Response) => { 
+const getAdminByID = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const id = req.params.id;
-    const data=req.body
-   const result = await AdminService.updateAdminIntoDB(id,data)
-   res.status(200).json({
-     success: true,
-     message: "Successfully updated",
-     data:result
-   })
+    const result = await AdminService.getByIdFromDB(id);
+  
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Successfully retrieved",
+      data:result
+    })
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message || "Something went wrong",
-      error
-   })
+  next(error)
   }
- }
+};
+const updateIntoDB = async (req: Request, res: Response,next:NextFunction) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const result = await AdminService.updateAdminIntoDB(id, data);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Successfully updated",
+      data: result
+    })
+  } catch (error) {
+    next(error)
+  }
+};
+
+const deleteAdmin = async (req: Request, res: Response,next:NextFunction) => {
+  try {
+    const id = req.params.id;
+    const result = await AdminService.deleteAdminFromDB(id);
+  
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Successfully deleted",
+      data: result
+    })
+  } catch (error) {
+   next(error)
+  }
+};
+const softDeleteAdmin = async (req: Request, res: Response,next:NextFunction) => {
+  try {
+    const id = req.params.id;
+    const result = await AdminService.softDeleteAdminFromDB(id);
+ 
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Successfully deleted",
+     data: result
+  
+    })
+  } catch (error) {
+  next(error)
+  }
+};
+
 export const AdminController = {
   getAllAdminFromDB,
   getAdminByID,
   updateIntoDB,
-  
+  deleteAdmin, 
+  softDeleteAdmin
 };
