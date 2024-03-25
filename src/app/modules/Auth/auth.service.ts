@@ -1,20 +1,21 @@
 import prisma from "../../../shared/prisma";
-import * as bycrypt from "bcrypt";
+import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+
+
 const loginUser = async (payload: { email: string; password: string }) => {
-  console.log("login user", payload);
   const existsUser = await prisma.user.findFirstOrThrow({
     where: {
       email: payload.email,
     },
   });
-  const isCorrectPassword = await bycrypt.compare(
+  const isCorrectPassword = await bcrypt.compare(
     payload.password,
     existsUser.password
   );
-    if (!isCorrectPassword) {
-        throw new Error("Invalid password")
-    }
+  if (!isCorrectPassword) {
+    throw new Error("Invalid password")
+  }
   const accessToken = jwt.sign(
     {
       email: existsUser.email,
@@ -22,16 +23,25 @@ const loginUser = async (payload: { email: string; password: string }) => {
     },
     "abcdefghijklmnop12365423456789",
     {
-        algorithm: "HS256",
-        expiresIn:'15d'
+      algorithm: "HS256",
+      expiresIn: "5m",
     }
-    );
-    console.log(accessToken);
-
-    return {
-        accessToken,
-        needPasswordChange:existsUser.needPasswordChange
-    };
+  );  const refreshToken = jwt.sign(
+    {
+      email: existsUser.email,
+      role: existsUser.role,
+    },
+    "abcdefghijklmnop12365423456789sdfasdfesfdfdsfewwwff8r5eR8f4w687ds4f65d",
+    {
+      algorithm: "HS256",
+      expiresIn: "30d",
+    }
+  );
+  return {
+    accessToken,
+    needPasswordChange: existsUser.needPasswordChange,
+    refreshToken,
+  };
 };
 
 export const AuthService = {
