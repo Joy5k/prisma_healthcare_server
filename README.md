@@ -2,7 +2,7 @@ For setup prisma project with postgresql follow this,
 
 ```
 npm init -y
-npm install prisma typescript ts-node @types/node ts-node-dev cors express @types/express bcrypt @types/bcrypt http-status zod jsonwebtoken @types/jsonwebtoken
+npm install prisma typescript ts-node @types/node ts-node-dev cors express @types/express bcrypt @types/bcrypt http-status zod jsonwebtoken @types/jsonwebtoken dotenv
 npx tsc --init
 npx prisma init
 
@@ -25,4 +25,9 @@ connect the project with database in env file
 
 1. your name
 2. password
-   3.project name
+3.project name
+### Generate random secret key 
+```
+node 
+require('crypto').randomBytes(64).toString('hex')
+```

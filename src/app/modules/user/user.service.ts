@@ -17,7 +17,6 @@ const createAdmin = async (data: any) => {
     });
     const createAdmin = await prisma.admin.create({
       data: data.admin,
-      //the data.admin getting from the client so don't concern
     });
     return createAdmin;
   });
