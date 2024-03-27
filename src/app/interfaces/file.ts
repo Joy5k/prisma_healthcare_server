@@ -22,4 +22,16 @@ export type ICLoudinaryResponse={
     original_filename: string;
     original_extension: string;
     api_key: string;
-  }
+}
+  
+export type IFileInfo = {
+    fieldname: string;
+    originalname: string;
+    encoding: string;
+    mimetype: string;
+    destination: string;
+    filename: string;
+    path: string;
+    size: number;
+  };
+  
