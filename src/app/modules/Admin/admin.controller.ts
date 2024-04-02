@@ -9,7 +9,7 @@ import catchAsync from "../../../shared/catchAsync";
 
 
 const getAllAdminFromDB: RequestHandler = catchAsync(async (req, res, next) => {
-  const filters = pick(req.query, adminFilterableField);
+  const filters = pick(req.query,[ "description"]);
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
   console.log(options);
   const result = await AdminService.getAllAdminFromDB(filters, options);
