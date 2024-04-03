@@ -238,7 +238,7 @@ const updateMyProfile = async (user:IAuthUser, req:Request) => {
 
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
-      email: user.email,
+      email: user?.email,
       status: UserStatus.ACTIVE,
     },
     select: {
