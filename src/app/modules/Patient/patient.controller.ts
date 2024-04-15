@@ -3,8 +3,8 @@ import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
 import pick from '../../../shared/pick';
-import { patientFilterableFields } from './patient.constant';
-import { PatientService } from './patient.service';
+import { patientFilterableFields } from './patient.constants';
+import { PatientService } from './patient.services';
 
 const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, patientFilterableFields);

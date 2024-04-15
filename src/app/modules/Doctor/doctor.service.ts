@@ -2,8 +2,8 @@ import { Doctor, Prisma, UserStatus } from "@prisma/client";
 import prisma from "../../../shared/prisma";
 import { IDoctorFilterRequest, IDoctorUpdate } from "./doctor.interface";
 import { IPaginationOptions } from "../../interfaces/pagination";
+import { paginationHelper } from "../../../helpars/paginationHelper";
 import { doctorSearchableFields } from "./doctor.constants";
-import { paginationHelper } from './../../../helpers/paginationHelper';
 
 const getAllFromDB = async (
     filters: IDoctorFilterRequest,
@@ -31,7 +31,7 @@ const getAllFromDB = async (
         andConditions.push({
             doctorSpecialties: {
                 some: {
-                    specialties: {
+                    specialities: {
                         title: {
                             contains: specialties,
                             mode: 'insensitive'
@@ -69,7 +69,7 @@ const getAllFromDB = async (
         include: {
             doctorSpecialties: {
                 include: {
-                    specialties: true
+                    specialities: true
                 }
             }
         },
@@ -98,7 +98,7 @@ const getByIdFromDB = async (id: string): Promise<Doctor | null> => {
         include: {
             doctorSpecialties: {
                 include: {
-                    specialties: true
+                    specialities: true
                 }
             }
         }
@@ -125,24 +125,25 @@ const updateIntoDB = async (id: string, payload: IDoctorUpdate) => {
 
         if (specialties && specialties.length > 0) {
             // delete specialties
-            const deleteSpecialtiesIds = specialties.filter((specialty:any) => specialty.isDeleted);
+            const deleteSpecialtiesIds = specialties.filter(specialty => specialty.isDeleted);
             //console.log(deleteSpecialtiesIds)
             for (const specialty of deleteSpecialtiesIds) {
                 await transactionClient.doctorSpecialties.deleteMany({
                     where: {
                         doctorId: doctorInfo.id,
-                        specialtiesId: specialty.specialtiesId
+                        specialitiesId: specialty.specialtiesId
                     }
                 });
             }
 
             // create specialties
-            const createSpecialtiesIds = specialties.filter((specialty:any) => !specialty.isDeleted);
+            const createSpecialtiesIds = specialties.filter(specialty => !specialty.isDeleted);
+            console.log(createSpecialtiesIds)
             for (const specialty of createSpecialtiesIds) {
                 await transactionClient.doctorSpecialties.create({
                     data: {
                         doctorId: doctorInfo.id,
-                       specialtiesId: specialty.specialtiesId
+                        specialitiesId: specialty.specialtiesId
                     }
                 });
             }
@@ -156,7 +157,7 @@ const updateIntoDB = async (id: string, payload: IDoctorUpdate) => {
         include: {
             doctorSpecialties: {
                 include: {
-                   specialties: true
+                    specialities: true
                 }
             }
         }
