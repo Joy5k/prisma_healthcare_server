@@ -65,11 +65,16 @@ const getAllFromDB = async (
         take: limit,
         orderBy: options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
-            : { createdAt: 'desc' },
+            : { averageRating: 'desc' },
         include: {
             doctorSpecialties: {
                 include: {
                     specialities: true
+                }
+            },
+            review: {
+                select: {
+                    rating: true
                 }
             }
         },
@@ -100,7 +105,8 @@ const getByIdFromDB = async (id: string): Promise<Doctor | null> => {
                 include: {
                     specialities: true
                 }
-            }
+            },
+            review: true
         }
     });
     return result;
